@@ -18,6 +18,23 @@
     gap: 10px; /* Espacio entre los botones */
 }
 
+.shadow-xs {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.border-indigo-100 {
+    border-color: #e0e7ff;
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+.animate-ping {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 .icon-button-new {
     background: none;
     border: none;
@@ -51,10 +68,34 @@
     color: #085108; /* Ajusta el color del ícono (opcional) */
 }
 
-.icon-button-trash, .icon-button-edit {
+.icon-button-users {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.icon-button-users i {
+    font-size: 20px; /* Ajusta el tamaño del ícono si lo necesitas */
+    color: rgba(176, 111, 85, 0.85); /* Ajusta el color del ícono (opcional) */
+}
+
+.icon-button-card {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.icon-button-card i {
+    font-size: 20px; /* Ajusta el tamaño del ícono si lo necesitas */
+    color: rgba(41, 94, 249, 0.88); /* Ajusta el color del ícono (opcional) */
+}
+
+
+.icon-button-trash, .icon-button-edit, .icon-button-users, .icon-button-card {
     transition: transform 0.2s ease; /* Suaviza la transición para que el cambio sea más fluido */
 }
 
-.icon-button-trash:hover, .icon-button-edit:hover {
+.icon-button-trash:hover, .icon-button-edit:hover, .icon-button-users:hover , .icon-button-card:hover {
     transform: scale(1.1); /* Aumenta el tamaño al 110% */
 }
+

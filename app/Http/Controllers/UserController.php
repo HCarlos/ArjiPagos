@@ -31,10 +31,7 @@ class UserController extends Controller
                 'totalAlumnos' => User::count(),
             ]);
         }
-        $user = User::query()
-            ->with('user_adress')
-            ->with('user_data_extend')
-            ->with('user_alumno')
+        $user = User::with(['user_adress', 'user_data_extend', 'user_alumno'])
             ->orderBy('id', 'desc')
             ->paginate(500);
 
