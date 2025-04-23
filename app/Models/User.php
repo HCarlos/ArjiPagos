@@ -3,6 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Catalogos\Familia;
+use App\Models\User\Permission;
+use App\Models\User\Role;
+use App\Models\User\UserAdress;
+use App\Models\User\UserAlumno;
+use App\Models\User\UserDataExtend;
 use App\Traits\UserAttributes;
 use App\Traits\UserImport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,8 +17,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use LaravelAndVueJS\Traits\LaravelPermissionToVueJS;
-//use Spatie\Permission\Models\Permission;
-//use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -65,18 +69,14 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
+    protected function casts(): array{
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'fecha_nacimiento' => 'date'
+            'fecha_nacimiento' => 'date:Y-m-d'
         ];
     }
-//'emails' => 'array',
-//'celulares' => 'array',
-//'telefonos' => 'array',
-//'domicilio' => 'array',
+
 
     public function scopeSearch($query, $search){
         if (!$search || $search == "" || $search == null) return $query;
@@ -102,13 +102,15 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-//    public function Imagen(){
-//        return $this->hasOne(Imagene::class,'id','imagene_id');
-//    }
+    public function familias(): \Illuminate\Database\Eloquent\Relations\BelongsToMany{
+        return $this->belongsToMany(Familia::class, 'familia_user_role', 'user_id', 'familia_id')
+            ->withPivot( 'role_id', 'tutor_id', 'vivecon_id', 'es_menor');
+    }
 
-//    public function imagenes(){
-//        return $this->belongsToMany(Imagene::class,'imagene_user','imagene_id','user_id');
-//    }
+    public function rolesfamilias(): \Illuminate\Database\Eloquent\Relations\BelongsToMany{
+        return $this->belongsToMany(Role::class, 'familia_user_role', 'user_id', 'role_id')
+            ->withPivot( 'familia_id', 'tutor_id', 'vivecon_id', 'es_menor');
+    }
 
 
     public function user_adress(){
@@ -119,17 +121,22 @@ class User extends Authenticatable
         return $this->hasOne(UserDataExtend::class);
     }
 
+    public function user_alumno(){
+        return $this->hasOne(UserAlumno::class);
+    }
+
     public function IsEmptyPhoto(){
-        return $this->filename == '' ? true : false;
+        return $this->filename == '';
     }
 
     public function IsFemale(){
-        return $this->genero == 0 ? true : false;
+        return $this->genero == 0;
     }
 
     public function scopeMyID(){
         return $this->id;
     }
+
 
 //    public function scopeRole(){
 //        return $this->roles()->first();

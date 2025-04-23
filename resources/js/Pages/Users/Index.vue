@@ -3,25 +3,23 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import {destroyDataTable, initializeDataTable} from "@/js/arjiapp";
-import $ from 'jquery';
-import 'datatables.net-dt/css/dataTables.dataTables.min.css';
-import DataTable from 'datatables.net-dt';
-import {onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import UserModal from "@/Components/Users/UserModal.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue';
-
-import {router} from "@inertiajs/vue3";
 import "/resources/css/general.css";
 
-// const props = defineProps({
-// 	users: {
-// 		type: Object
-// 	},
-//     totalAlumnos: Number   // Total de alumnos
-// })
+// Inicia - Bloque de librerias fundamentales
+import { router, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import {Inertia} from "@inertiajs/inertia";
+import {useDatatableReload} from "@/Components/useDatatableReload.js";
+import $ from 'jquery';
+import DataTable from 'datatables.net-vue3';
+import DataTablesLib from 'datatables.net-dt';
+// Finaliza - Bloque de librerias fundamentales
+
+
 
 const users = computed(() => usePage().props.users);
 const totalAlumnos = computed(() => usePage().props.totalAlumnos);
@@ -34,12 +32,28 @@ const showCreateModal = ref(false);
 // Referencia para la instancia de DataTable
 const dataTable = ref(null);
 
+const refreshData = () => {
+    router.reload({
+        only: ['totalAlumnos', 'users'],
+        preserveScroll: true,
+        onFinish: async () => {
+            await nextTick();
+            if (dataTable.value) {
+                dataTable.value.clear().rows.add(props.users).draw(); // Usa props.familias
+                console.log('🔥 Datos actualizados (modo desarrollo)', props.users);
+            }
+        },
+    });
+};
+
+
 const handleClose = () => {
     console.log('Evento close recibido') // Para depuración
     selectedUserId.value = null
 }
 // Inicializar DataTable después de montar
-onMounted(() => {
+onMounted(async () => {
+    await nextTick();
     initializeDataTable(dataTable);
     // initFlowbite();
 });
@@ -48,13 +62,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     destroyDataTable(dataTable);
 });
-
-// Reiniciar al actualizar datos
-watch(() => users, () => {
-    // destroyDataTable();
-    initializeDataTable(dataTable);
-});
-
 
 const destroy = (userId) => {
     if (confirm('¿Estás seguro de que deseas eliminar el usuario '+userId+' ?')) {
@@ -66,7 +73,6 @@ const destroy = (userId) => {
         router[method](url, {
             preserveScroll: true,
             onSuccess: () => {
-                alert('Usuario '+userId+' eliminado correctamente');
                 $("#tblUser-"+userId).remove();
             },
             onError: (err) => {
@@ -101,6 +107,7 @@ const destroy = (userId) => {
         mode="create"
         class="z-10"
         @close="showCreateModal = false"
+        @success="refreshData"
     />
     <!-- Modal de edición -->
     <UserModal
@@ -109,6 +116,7 @@ const destroy = (userId) => {
         mode="edit"
         class="z-21"
         @close="handleClose"
+        @success="refreshData"
     />
 
     <AuthenticatedLayout>

@@ -28,9 +28,14 @@
         "@vuelidate/validators": "^2.0.4",
         "datatables.net": "^2.2.2",
         "datatables.net-dt": "^2.2.2",
+        "datatables.net-vue3": "^3.0.4",
         "font-awesome": "^4.7.0",
         "laravel-echo": "^1.19.0",
         "laravel-permission-to-vuejs": "^3.0.8",
-        "socket.io-client": "^4.8.1"
+        "primeflex": "^4.0.0",
+        "primeicons": "^7.0.0",
+        "primevue": "^4.3.3",
+        "socket.io-client": "^4.8.1",
+        "vue3-easy-data-table": "^1.5.47"
     }
 }

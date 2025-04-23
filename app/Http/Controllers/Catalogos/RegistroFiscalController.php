@@ -23,6 +23,11 @@ class RegistroFiscalController extends Controller{
     public function index(Request $request): Response
     {
 
+        $regimenes_fiscales = RegimenFiscal::get(['id', 'clave_regimen_fiscal', 'regimen_fiscal'])
+            ->sortBy('clave_regimen_fiscal')
+            ->pluck('formattedRegimenFiscal', 'id')
+            ->toArray();
+
         $filters =$request->input('search');
 
         if ($filters) {
@@ -31,33 +36,23 @@ class RegistroFiscalController extends Controller{
             $filters      = $F->str_sanitizer($filters);
             $tsString     = $F->string_to_tsQuery( strtoupper($filters),' & ');
 
-            $registros = RegistroFiscal::query()
+            $registros = RegistroFiscal::
+                with('regimen_fiscal')
                 ->search( $tsString )
                 ->orderBy('id', 'desc')
                 ->paginate();
 
             return Inertia::render('Catalogos/RegistrosFiscales/RegistrosFiscalesList', [
                 'registros' => $registros,
+                'regimenes_fiscales' => $regimenes_fiscales,
                 'totalRegFis' => RegistroFiscal::count(),
             ]);
         }
-
-
-
-        $regimenes_fiscales = RegimenFiscal::get(['id', 'clave_regimen_fiscal', 'regimen_fiscal'])
-            ->sortBy('clave_regimen_fiscal')
-            ->pluck('formattedRegimenFiscal', 'id')
-            ->toArray();
-
-//        dd($regimenes_fiscales);
 
         $regfis = RegistroFiscal::
             with('regimen_fiscal')
             ->orderBy('id', 'desc')
             ->paginate(500);
-
-//        dd($regfis);
-
 
         return Inertia::render('Catalogos/RegistrosFiscales/RegistrosFiscalesList', [
             'registros' => $regfis,

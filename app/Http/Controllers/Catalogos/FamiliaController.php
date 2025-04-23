@@ -6,6 +6,7 @@ use App\Classes\FuncionesController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalogos\FamiliaRequest;
 use App\Models\Catalogos\Familia;
+use DragonCode\Support\Facades\Helpers\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,7 +30,7 @@ class FamiliaController extends Controller{
             $familias = Familia::query()
                 ->where('familia', 'like', '%' . strtoupper(trim($filters)) . '%')
                 ->orderBy('familia')
-                ->paginate(250);
+                ->paginate(10);
 
             return Inertia::render('Catalogos/Familias/FamiliasList', [
                 'familias' => $familias,
@@ -41,12 +42,19 @@ class FamiliaController extends Controller{
 
         $familias = Familia::query()
             ->orderByDesc('id')
-            ->paginate(250);
+            ->paginate(10);
 
-//        dd($familias);
+        $fam =  $familias->map(fn($f) => [
+            'id' => $f->id, // Debe existir
+            'familia' => $f->familia,
+        ]);
+
+
+//        dd($fam);
+
 
         return Inertia::render('Catalogos/Familias/FamiliasList', [
-            'familias' => $familias,
+            'familias' => $familias, //['data' => $fam],
             'totalFamilias' => Familia::count(),
         ]);
 
@@ -64,9 +72,11 @@ class FamiliaController extends Controller{
 
 
     public function destroy($famId){
-        $regfis = Familia::find($famId);
-        $regfis->delete();
-        return redirect()->back()->with('success', 'Regimen Fiscal eliminado exitosamente');
+        $Item = Familia::find($famId);
+        if ($Item !== null) {
+            $Item->delete();
+            return redirect()->back()->with('success', 'Regimen Fiscal eliminado exitosamente');
+        }
     }
 
 

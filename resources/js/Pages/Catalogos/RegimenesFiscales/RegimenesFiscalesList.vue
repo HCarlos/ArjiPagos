@@ -6,23 +6,24 @@ import {destroyDataTable, initializeDataTable} from "@/js/arjiapp";
 import $ from 'jquery';
 import 'datatables.net-dt/css/dataTables.dataTables.min.css';
 import DataTable from 'datatables.net-dt';
-import {onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from "vue";
 
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { router } from '@inertiajs/vue3';
+import {router, usePage} from '@inertiajs/vue3';
 
 import "/resources/css/general.css";
 import FormModalRegimenFiscal from "@/Pages/Catalogos/RegimenesFiscales/FormModalRegimenFiscal.vue";
 
-const props = defineProps({
-    regimenes_fiscales: {
-        type: Object
-    },
-    totalRegFis: Number
-});
+// const props = defineProps({
+//     regimenes_fiscales: {
+//         type: Object
+//     },
+//     totalRegFis: Number
+// });
 
-const { regimenes_fiscales } = props;
+const regimenes_fiscales = computed(() => usePage().props.regimenes_fiscales);
+const totalRegFis = computed(() => usePage().props.totalRegFis);
 
 const textSearch = ref('');
 const showModal = ref(false);
@@ -55,11 +56,15 @@ onBeforeUnmount(() => {
     destroyDataTable();
 });
 
-// Reiniciar al actualizar datos
-watch(() => props.regimenes_fiscales, () => {
-    destroyDataTable();
-    initializeDataTable();
-});
+watch(
+    () => regimenes_fiscales.value?.length, // solo reacciona cuando cambia la lista
+    () => {
+        // destroyDataTable(dataTable);
+        nextTick(() => {
+            initializeDataTable(dataTable, [[1, 'desc']],50);
+        });
+    }
+);
 
 
 const destroy = (regifisId) => {

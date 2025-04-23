@@ -2,55 +2,106 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
-import {destroyDataTable, initializeDataTable} from "@/js/arjiapp";
-import $ from 'jquery';
-import 'datatables.net-dt/css/dataTables.dataTables.min.css';
-import DataTable from 'datatables.net-dt';
-import {onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {initializeDataTable} from "@/js/arjiapp";
 
+import 'datatables.net-dt/css/dataTables.dataTables.min.css';
+import {onBeforeUnmount, onMounted, ref, watch, nextTick, watchEffect} from "vue";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { router } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue';
 import "/resources/css/general.css";
 import FormModalFamilia from "@/Pages/Catalogos/Familias/FormModalFamilia.vue";
 
+
+// Inicia - Bloque de librerias fundamentales
+import { router, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+// import {Inertia} from "@inertiajs/inertia";
+// import {useDatatableReload} from "@/Components/useDatatableReload.js";
+// import $, {data} from 'jquery';
+// import DataTable from 'datatables.net-vue3';
+import DataTablesLib from 'datatables.net-dt';
+// Finaliza - Bloque de librerias fundamentales
+
+const dataTable = ref(null);
+
 const familias = computed(() => usePage().props.familias);
+
+// const props = defineProps({
+//     familias: {
+//         type: Array
+//     },
+// })
+
 const totalFamilias = computed(() => usePage().props.totalFamilias);
 
 const textSearch = ref('');
 const showModal = ref(false);
 const selectedItem = ref({});
+const modalKey = ref('nuevo');
 
-// Referencia para la instancia de DataTable
-const dataTable = ref(null);
+onMounted(async () => {
+    await nextTick();
+    // dataTable.value = initializeDataTable( dataTable, [[0, 'desc']],10, "familias.index");
+});
 
-const openModal = (item = null) => {
-    selectedItem.value = item ?? {};
+onBeforeUnmount(() => {
+    // dataTable.value.destroy();
+});
+
+// Recarga compatible con Inertia
+const refreshData = () => {
+    router.reload({
+        only: ['totalFamilias', 'familias'],
+        preserveScroll: true,
+        onFinish: async () => {
+            await nextTick();
+            // if (dataTable.value) {
+                // dataTable.value.draw();
+                // dataTable.value.destroy(); // Destruye la instancia
+                // dataTable.value = initializeDataTable( dataTable, [[0, 'desc']],10);
+
+                showModal.value = false;
+                selectedItem.value = null;
+
+            console.log('🔥 Datos actualizados (modo desarrollo)', familias.value.data);
+            // }
+        },
+    });
+
+    // dataTable.value.ajax.url("/familias_list");
+    // dataTable.value.data(familias.value.data);
+    // dataTable.value.ajax.reload();
+};
+
+const openModal = (item) => {
+    selectedItem.value = item !== null ? { ...item } : {};
+    console.log('Ventana open recibido', selectedItem.value);
     showModal.value = true;
 };
 
 const handleClose = () => {
-    console.log('Evento close recibido') // Para depuración
-    selectedItem.value = null
+    selectedItem.value = null;
+    showModal.value = false;
+    console.log('Ventana close recibido')
 }
-// Inicializar DataTable después de montar
-onMounted(() => {
-    initializeDataTable(dataTable, [[0, 'desc']],50);
-});
 
-// Destruir antes de desmontar
-onBeforeUnmount(() => {
-    destroyDataTable(dataTable);
-});
 
-watch(() => familias, (newVal) => {
-    // Reinicia tabla aquí si lo necesitas automáticamente
-    initializeDataTable(dataTable, [[0, 'desc']], 50);
-});
+const reloadPage = function() {
+    window.location.reload();
+}
 
-// Destruir DataTable
+// watch(
+//     () => JSON.parse(JSON.stringify(familias.value.data)), // Clonado profundo
+//     (newVal, oldVal) => {
+//         nextTick(() => {
+//             if (dataTable.value) {
+//                 dataTable.value.clear().rows.add(familias).draw(); // Usa props.familias
+//                 console.log('🔁 DataTable reinicializado (watch JSON.stringify)');
+//             }
+//         });
+//     },
+//     { deep: true, immediate: true }
+// );
 
 const destroy = (itemId) => {
     if (confirm('¿Estás seguro de que deseas eliminar el Item '+itemId+' ?')) {
@@ -62,7 +113,7 @@ const destroy = (itemId) => {
         router[method](url, {
             preserveScroll: true,
             onSuccess: () => {
-                alert('El Item '+itemId+' fue eliminado correctamente');
+                // alert('El Item '+itemId+' fue eliminado correctamente');
                 $("#tblData-"+itemId).remove();
             },
             onError: (err) => {
@@ -77,8 +128,20 @@ const destroy = (itemId) => {
 }
 
 
+const gotoFamiliaElements = (item) => {
+    selectedItem.value = item !== null ? { ...item } : {};
+    window.location.href = '/familiaElements/' + selectedItem.value.id;
+};
+
+const gotoFamiliaRegFis = (item) => {
+    selectedItem.value = item !== null ? { ...item } : {};
+    window.location.href = '/familiaRegFis/' + selectedItem.value.id;
+};
+
+
 
 </script>
+
 
 <style>
 /* Personalización adicional */
@@ -89,6 +152,19 @@ const destroy = (itemId) => {
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     @apply bg-blue-500 text-white border-blue-500 hover:bg-blue-600;
 }
+
+
+.custom-easy-table {
+    --easy-table-header-font-size: 0.875rem;
+    --easy-table-body-row-height: 45px;
+}
+
+/* Fuerza la visualización de elementos */
+.vue3-easy-data-table__body > tr > td {
+    display: table-cell !important;
+}
+
+
 </style>
 
 
@@ -106,24 +182,36 @@ const destroy = (itemId) => {
 
                 <div class="px-4 py-2 -mx-3 w-full">
 					<span class="mx-3 float-start">
-						<span class="font-semibold text-blue-500">({{ totalFamilias }}) Familias</span>
+						<span class="font-semibold text-blue-500">({{ totalFamilias }}) Familias </span>
 						<p class="text-sm text-gray-600">Catálago general</p>
 					</span>
 
-                    <SecondaryButton @click="openModal()">
-                        <i class="mr-2 fas fa-plus"></i> Nuevo Registro
+                    <SecondaryButton @click="openModal(null)" class="mr-2">
+                        <i class="mr-2 fas fa-plus"></i>
+                    </SecondaryButton>
+
+                    <SecondaryButton @click="reloadPage" class="mr-2">
+                        <i class="mr-2 fas fa-refresh"></i>
                     </SecondaryButton>
 
                     <FormModalFamilia
+                        :key="selectedItem?.value?.id ?? 'nuevo'"
                         :show="showModal"
                         :familia="selectedItem"
-                        @close="showModal = false"
+                        @close="handleClose"
                         @success="refreshData"
                     />
 
+<!--                    <FormModalFamilia-->
+<!--                        :show="showModal"-->
+<!--                        :familia="selectedItem"-->
+<!--                        @close="showModal = false"-->
+<!--                        @success="refreshData"-->
+<!--                    />-->
+
                     <span
                         class=" float-end px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase sm:grid-cols-9">
-                        <form action="/familias_list">
+                        <form action="/familias">
                         <input
                             type="text"
                             name="search"
@@ -142,6 +230,7 @@ const destroy = (itemId) => {
             </div>
 
             <div class="mt-6 overflow-x-auto">
+
                     <table id="datasTable" class="w-full whitespace-no-wrap">
                         <thead>
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b">
@@ -157,6 +246,8 @@ const destroy = (itemId) => {
                             <td class="px-4 py-3 text-sm td-buttons">
                                 <SecondaryButton as="button" @click="destroy(item.id)" class="icon-button-trash"><i class="fa fa-trash"></i></SecondaryButton>
                                 <SecondaryButton as="button" @click="openModal(item)"  class="icon-button-edit"><i class="fa fa-edit"></i></SecondaryButton>
+                                <SecondaryButton as="button" @click="gotoFamiliaElements(item)"  class="icon-button-users"><i class="fa fa-users"></i></SecondaryButton>
+                                <SecondaryButton as="button" @click="gotoFamiliaRegFis(item)"  class="icon-button-card"><i class="fa fa-credit-card"></i></SecondaryButton>
                             </td>
 
                         </tr>

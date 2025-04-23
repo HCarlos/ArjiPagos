@@ -11,30 +11,28 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
-        // User::factory(10)->create();
-
-//        User::factory()->create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.com',
-//        ]);
+    public function run(): void{
 
 
-        $this->call(RolesAndPermissionsSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(RolesAndPermissionsSeeder::class);
 
-        $this->call(ImportUsersAlumnosSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(ImportUsersAlumnosSeeder::class);
 
-        $this->call(ImportUsersSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(ImportUsersSeeder::class);
 
-        $this->call(ImportRegimenesFiscalesSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(ImportRegimenesFiscalesSeeder::class);
 
-        $this->call(ImportRegistrosFiscalesSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(ImportRegistrosFiscalesSeeder::class);
 
-        $this->call(ImportFamiliasSeeder::class); // This will run the UsersTableSeeder command
+        $this->call(ImportFamiliasSeeder::class);
 
+        $this->call(ImportFamiliasUsersRolesFromParentsSeeder::class);
 
+        $this->call(ImportFamiliasUsersRolesFromAlumnosSeeder::class);
 
+        $this->call(ImportFamiliasUsersRolesFromParentsSeeder::class);
+
+        $this->call(ImportFamiliasRegistrosfiscalesSeeder::class);
 
     }
 }

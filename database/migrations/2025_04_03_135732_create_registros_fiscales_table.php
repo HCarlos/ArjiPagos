@@ -36,8 +36,8 @@ return new class extends Migration
             $table->string("num_int",25)->default('');
             $table->string("colonia",250)->default('');
             $table->string("localidad",250)->default('');
-            $table->string("estado",30)->default('');
-            $table->string("pais",30)->default('México');
+            $table->string("estado",100)->default('');
+            $table->string("pais",100)->default('México');
             $table->string("codigo_postal",10)->default('');
             $table->unsignedInteger("regimen_fiscal_id")->index();
             $table->string("email1",250)->default('');

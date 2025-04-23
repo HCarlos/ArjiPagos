@@ -6,7 +6,6 @@ use App\Classes\FuncionesController;
 use App\Http\Requests\User\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -22,9 +21,7 @@ class UserController extends Controller
             $filters      = $F->str_sanitizer($filters);
             $tsString     = $F->string_to_tsQuery( strtoupper($filters),' & ');
 
-            $users = User::all()
-                ->with('user_adress')
-                ->with('user_data_extend')
+            $users = User::with(['user_adress', 'user_data_extend', 'user_alumno'])
                 ->search( $tsString )
                 ->orderBy('id', 'desc')
                 ->paginate();
@@ -37,6 +34,7 @@ class UserController extends Controller
         $user = User::query()
             ->with('user_adress')
             ->with('user_data_extend')
+            ->with('user_alumno')
             ->orderBy('id', 'desc')
             ->paginate(500);
 

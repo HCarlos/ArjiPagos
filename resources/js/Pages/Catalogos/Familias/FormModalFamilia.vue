@@ -16,8 +16,6 @@ const props = defineProps({
     },
 });
 
-const { familia } = props;
-
 const emit = defineEmits(['close', 'success']);
 const processing = ref(false)
 const errors = ref({})
@@ -35,16 +33,32 @@ const form = useForm({
 
 });
 
-watch(() => props.familia, (newVal) => {
-    if (newVal.id) {
-        form.defaults({
-            ...newVal
-        });
-        form.reset();
+watch(() => props.familia, (nuevo) => {
+    if (nuevo && Object.keys(nuevo).length > 0) {
+        // Si viene para editar, llenamos todo explícitamente
+        form.defaults({ ...nuevo });
+        form.reset(); // esto ahora sí tendrá sentido
     } else {
+        // Nuevo registro: limpiar manualmente el formulario
+
         form.reset();
+        form.clearErrors();
+        form.defaults({
+            id: 0,
+            familia: '',
+            observaciones_control_escolar: '',
+            observaciones_pagos: '',
+            convenios: '',
+            email_pagos: '',
+            email_facturas: '',
+            email_control_escolar: '',
+            email_convenios: '',
+        });
+
+
     }
 }, { immediate: true, deep: true });
+
 
 const submit = () => {
 
@@ -78,8 +92,28 @@ const submit = () => {
 const closeModal = () => {
     form.reset();
     form.clearErrors();
+    limpiarFormulario();
     emit('close');
 };
+
+
+const limpiarFormulario = () => {
+    form.reset();
+    form.clearErrors();
+    form.defaults({
+        id: 0,
+        familia: '',
+        observaciones_control_escolar: '',
+        observaciones_pagos: '',
+        convenios: '',
+        email_pagos: '',
+        email_facturas: '',
+        email_control_escolar: '',
+        email_convenios: '',
+    });
+};
+
+
 </script>
 
 

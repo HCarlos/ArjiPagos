@@ -42,22 +42,7 @@ class ImportRegistrosFiscalesSeeder extends Seeder{
                     $arr = str_getcsv($dupla[0]);
 
 
-//                    dd($arr);
-
-//                    if ($x === 14) {
-//                        $texto = $arr[3];
-//                        var_dump($texto);
-//
-//                        $texto_corregido = mb_convert_encoding($texto, 'UTF-8');
-//                        var_dump($texto_corregido);
-//
-//                        $texto_normal = utf8_encode($texto);
-//                        var_dump($texto_normal);
-//
-//
-//                    }
-
-                    if ( substr( $arr[1], 0, 2 ) !== 'XA' && substr( $arr[1], 0, 2 ) !== 'XE') {
+                    if ( !str_starts_with($arr[1], 'XA') && !str_starts_with($arr[1], 'XE')) {
                         $item = RegistroFiscal::create([
                             'rfc' => $arr[1] ?? '',
                             'razon_social' => utf8_encode(trim($arr[3])) ?? '',

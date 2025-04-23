@@ -33,6 +33,9 @@ return new class extends Migration
             $table->unsignedInteger('familia_id')->default(0)->index();
             $table->unsignedInteger('user_id')->default(0)->index();
             $table->unsignedInteger('role_id')->default(0)->index();
+            $table->unsignedInteger('tutor_id')->default(0)->index();
+            $table->unsignedInteger('vivecon_id')->default(0)->index();
+            $table->boolean('es_menor')->default(false)->index();
             $table->softDeletes();
             $table->timestamps();
             $table->unique([ 'familia_id','user_id','role_id']);

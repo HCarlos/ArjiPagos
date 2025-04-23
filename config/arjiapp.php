@@ -70,6 +70,7 @@ return [
             'user_adress' => 'user_adress',
             'user_extend' => 'user_extend',
             'user_becas'  => 'user_becas',
+            'user_alumno' => 'user_alumno',
             'categorias'  => 'categorias',
         ],
         'catalogos' => [

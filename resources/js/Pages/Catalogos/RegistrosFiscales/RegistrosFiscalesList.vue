@@ -6,26 +6,19 @@ import {destroyDataTable, initializeDataTable} from "@/js/arjiapp";
 import $ from 'jquery';
 import 'datatables.net-dt/css/dataTables.dataTables.min.css';
 import DataTable from 'datatables.net-dt';
-import {onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from "vue";
 
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { router } from '@inertiajs/vue3';
+import {router, usePage} from '@inertiajs/vue3';
 import FormModalRegistroFiscal from "@/Pages/Catalogos/RegistrosFiscales/FormModalRegistroFiscal.vue";
 
 import "/resources/css/general.css";
 
-const props = defineProps({
-    registros: {
-        type: Object
-    },
-    regimenes_fiscales: {
-        type: Object
-    },
-    totalRegFis: Number
-});
+const registros = computed(() => usePage().props.registros);
+const regimenes_fiscales = computed(() => usePage().props.regimenes_fiscales);
+const totalRegFis = computed(() => usePage().props.totalRegFis);
 
-const { regimenes_fiscales } = props;
 
 const textSearch = ref('');
 const showModal = ref(false);
@@ -40,8 +33,19 @@ const openModal = (registro = null) => {
 };
 
 const refreshData = () => {
-    router.reload({ only: ['registros'] });
+    router.reload({
+        only: ['totalRegFis', 'registros', 'regimenes_fiscales'],
+        preserveScroll: true,
+        onFinish: async () => {
+            await nextTick();
+            if (dataTable.value) {
+                dataTable.value.clear().rows.add(props.registros).draw(); // Usa props.familias
+                console.log('🔥 Datos actualizados (modo desarrollo)', props.registros);
+            }
+        },
+    });
 };
+
 
 
 const handleClose = () => {
@@ -49,7 +53,8 @@ const handleClose = () => {
     selectedRegistro.value = null
 }
 // Inicializar DataTable después de montar
-onMounted(() => {
+onMounted(async () => {
+    await nextTick();
     initializeDataTable(dataTable);
 });
 
@@ -57,13 +62,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     destroyDataTable();
 });
-
-// Reiniciar al actualizar datos
-watch(() => props.registros, () => {
-    destroyDataTable();
-    initializeDataTable();
-});
-
 
 const destroy = (regfisId) => {
     if (confirm('¿Estás seguro de que deseas eliminar el registro '+regfisId+' ?')) {
@@ -89,8 +87,6 @@ const destroy = (regfisId) => {
     }
 }
 
-
-
 </script>
 
 <style>
@@ -103,8 +99,6 @@ const destroy = (regfisId) => {
     @apply bg-blue-500 text-white border-blue-500 hover:bg-blue-600;
 }
 </style>
-
-
 
 <template>
 

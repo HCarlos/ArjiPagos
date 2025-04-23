@@ -1,11 +1,25 @@
 import {helpers} from "@vuelidate/validators";
+import {nextTick} from "vue";
 
-export const initializeDataTable = (dataTable, orden=[[0, 'desc']], cantidad_por_pagina=10) => {
-    // Verificar si ya existe una instancia
-    if (!$.fn.DataTable.isDataTable('#datasTable')) {
-        dataTable.value = $('#datasTable').DataTable({
-            pageLength: cantidad_por_pagina,  // Mostrar 10 registros por página
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],  // Opciones del menú
+
+export const initializeDataTable =  (dataTable,orden=[[0, 'desc']], cantidad_por_pagina=50, urlAjax) => {
+
+        // Para producción hay que desmarcarlas
+        if (window.jQuery && window.jQuery.fn.DataTable.isDataTable('#datasTable')) {
+            // dataTable.value.destroy();
+            // $('#datasTable tbody').empty();
+            console.log('La DataTable ya estaba inicializada 1');
+        }
+
+        if (dataTable.value !== null) {
+            // dataTable.value.destroy();
+            console.log('La DataTable ya estaba inicializada 1');
+        }
+
+    // Inicializar la DataTable en el DOM actualizado
+        return $('#datasTable').DataTable({
+            pageLength: cantidad_por_pagina,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
             emptyTable: "No se encontraron registros",
             processing: "Procesando...",
             loadingRecords: "Cargando...",
@@ -22,20 +36,24 @@ export const initializeDataTable = (dataTable, orden=[[0, 'desc']], cantidad_por
                 "sortAscending": ": activar para ordenar ascendente",
                 "sortDescending": ": activar para ordenar descendente"
             },
-            order: orden,  // Orden inicial por primera columna ascendente
-            // Estilos personalizados
+            order: orden,
             initComplete: function() {
                 $('.dataTables_length select').addClass('border rounded px-2 py-1');
                 $('.dataTables_filter input').addClass('border rounded px-2 py-1 ml-2');
-            }
+            },
+            paging: true,
+            searching: true,
         });
-    }
 };
 
-export const destroyDataTable = (dataTable) => {
-    if (dataTable.value) {
-        dataTable.value.destroy();
-        dataTable.value = null;
+    export const destroyDataTable = (dataTable) => {
+    try {
+        if ($.fn.DataTable.isDataTable('#datasTable')) {
+            dataTable.value.destroy(); // Destruye la instancia
+            dataTable.value.null; // Destruye la instancia
+        }
+    } catch (error) {
+        console.log(error.message);
     }
 };
 

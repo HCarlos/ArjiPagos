@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Catalogos\FamiliaController;
+use App\Http\Controllers\Catalogos\FamiliaElementController;
+use App\Http\Controllers\Catalogos\FamiliaRegistroFiscalController;
 use App\Http\Controllers\Catalogos\RegimenFiscalController;
 use App\Http\Controllers\Catalogos\RegistroFiscalController;
 use App\Http\Controllers\User\BulkPermissionsController;
@@ -57,10 +59,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('regimenes_fiscales.delete/{regifisId}', [RegimenFiscalController::class, 'destroy'])->name('regifis.delete');
 
     // FAMILIAS
-    Route::get('familias_list', [FamiliaController::class, 'index'])->name('familias.index')->middleware('auth');
+    Route::get('familias', [FamiliaController::class, 'index'])->name('familias.index')->middleware('auth');
     Route::post('familia.store', [FamiliaController::class, 'store'])->name('familia.store');
     Route::put('familia.update', [FamiliaController::class, 'update'])->name('familia.update');
     Route::delete('familia.delete/{famId}', [FamiliaController::class, 'destroy'])->name('familia.delete');
+
+    // FAMILIA - INTEGRANTES
+    Route::get('familiaElements/{familia}', [FamiliaElementController::class, 'index'])->name('familiaElements.index')->middleware('auth');
+    Route::post('familiaElement.store', [FamiliaElementController::class, 'store'])->name('familiaElement.store');
+    Route::put('familiaElement.update', [FamiliaElementController::class, 'update'])->name('familiaElement.update');
+    Route::delete('familiaElement.delete/{famEleId}', [FamiliaElementController::class, 'destroy'])->name('familiaElement.delete');
+
+    // FAMILIA - INTEGRANTES
+    Route::get('familiaRegFis/{familia}', [FamiliaRegistroFiscalController::class, 'index'])->name('familiaRegFis.index')->middleware('auth');
+    Route::post('familiaRegFis.store', [FamiliaRegistroFiscalController::class, 'store'])->name('familiaRegFis.store');
+    Route::put('familiaRegFis.update', [FamiliaRegistroFiscalController::class, 'update'])->name('familiaRegFis.update');
+    Route::delete('familiaRegFis.delete/{famEleId}', [FamiliaRegistroFiscalController::class, 'destroy'])->name('familiaRegFis.delete');
 
 
 

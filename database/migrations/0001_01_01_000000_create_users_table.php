@@ -39,6 +39,7 @@ return new class extends Migration
             $table->string('filename_thumb',50)->default('');
             $table->unsignedInteger('old_user_id')->default(0)->index();
             $table->unsignedInteger('old_persona_id')->default(0)->index();
+            $table->unsignedInteger('old_alumno_id')->default(0)->index();
             $table->string('session_id')->nullable();
             $table->unsignedInteger('imagen_id')->default(0)->index();
             $table->uuid('uuid')->default(DB::raw('uuid_generate_v4()'))->unique();
@@ -54,6 +55,32 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create($tableNames['user_alumno'], function (Blueprint $table) use ($tableNames) {
+            $table->increments('id');
+            $table->string('matricula_interna',25)->default('')->nullable();
+            $table->string('matricula_oficial',25)->default('')->nullable();
+            $table->string('email_alumno',250)->default('')->nullable();
+            $table->float('beca_sep',8,2)->default(0.00)->nullable();
+            $table->float('beca_arji',8,2)->default(0.00)->nullable();
+            $table->float('beca_sp',8,2)->default(0.00)->nullable();
+            $table->float('beca_bach',8,2)->default(0.00)->nullable();
+            $table->string('enfermedades',500)->default('')->nullable();
+            $table->string('reacciones_alergicas',500)->default('')->nullable();
+            $table->boolean('es_baja')->default(false);
+            $table->string('tipo_sangre',250)->default('')->nullable();
+            $table->date('fecha_ingreso')->nullable();
+            $table->string('motivo_baja',250)->default('')->nullable();
+            $table->string('observaciones',250)->default('')->nullable();
+            $table->unsignedInteger('user_id');
+            $table->softDeletes();
+            $table->timestamps();
+            $table->foreign('user_id')
+                ->references('id')
+                ->on($tableNames['users'])
+                ->onDelete('cascade');
+        });
+
 
         Schema::create($tableNames['user_adress'], function (Blueprint $table) use ($tableNames) {
             $table->increments('id');
@@ -78,10 +105,11 @@ return new class extends Migration
 
         Schema::create($tableNames['user_extend'], function (Blueprint $table) use ($tableNames) {
             $table->increments('id');
-            $table->string('ocupacion',250)->default('');
-            $table->string('profesion',250)->default('');
-            $table->string('lugar_trabajo',250)->default('');
-            $table->string('lugar_nacimiento',250)->default('');
+            $table->string('ocupacion',250)->default('')->nullable();
+            $table->string('profesion',250)->default('')->nullable();
+            $table->string('lugar_trabajo',250)->default('')->nullable();
+            $table->string('lugar_nacimiento',250)->default('')->nullable();
+            $table->string('nacionalidad',250)->default('')->nullable();
             $table->unsignedInteger('user_id');
             $table->softDeletes();
             $table->timestamps();
@@ -229,6 +257,7 @@ return new class extends Migration
 
         $tableNames = config('arjiapp.table_names.users');
         Schema::dropIfExists($tableNames['categorias']);
+        Schema::dropIfExists($tableNames['user_alumno']);
         Schema::dropIfExists($tableNames['user_adress']);
         Schema::dropIfExists($tableNames['user_extend']);
         Schema::dropIfExists($tableNames['users']);

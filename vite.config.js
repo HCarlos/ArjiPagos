@@ -31,6 +31,6 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-        include: ['jquery', 'datatables.net-dt','select2'],
+        include: ['jquery', 'select2', 'datatables.net-vue3', 'datatables.net-dt'],
     },
 });

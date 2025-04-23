@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Classes\FuncionesController;
-use App\Models\Permission;
-use App\Models\Role;
+use App\Models\User\Permission;
+use App\Models\User\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

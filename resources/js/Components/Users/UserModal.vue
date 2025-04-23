@@ -2,13 +2,16 @@
   import {reactive, ref, computed, nextTick, watch, onMounted} from 'vue'
   import { router } from '@inertiajs/vue3'
   import { usePage } from '@inertiajs/vue3'
+  import InputError from "@/Components/InputError.vue";
+  import Checkbox from '@/Components/Checkbox.vue';
 
   const page = usePage()
   const activeTab = ref(1)
   const tabs = [
     { id: 1, label: 'Datos Generales' },
     { id: 2, label: 'Domicilio' },
-    { id: 3, label: 'Otros Datos' }
+    { id: 3, label: 'Otros Datos' },
+    { id: 4, label: 'Solo Alumnos' }
   ]
 
   const props = defineProps({
@@ -55,7 +58,24 @@
               lugar_nacimiento: ' ',
               ocupacion: ' ',
               profesion: ' ',
-              lugar_trabajo: ' '
+              lugar_trabajo: ' ',
+              nacionalidad: ' ',
+          },
+          user_alumno: {
+              matricula_interna: ' ',
+              matricula_oficial: ' ',
+              email_alumno: ' ',
+              enfermedades: ' ',
+              reacciones_alergicas: ' ',
+              tipo_sangre: ' ',
+              beca_sep: '',
+              beca_arji: ' ',
+              beca_sp: ' ',
+              beca_bach: ' ',
+              es_baja: false,
+              motivo_baja: ' ',
+              fecha_ingreso: ' ',
+              observaciones: ' ',
           }
       }
 
@@ -70,6 +90,10 @@
               user_data_extend: {
                   ...defaultData.user_data_extend,
                   ...(props.user.user_data_extend || {})
+              },
+              user_alumno: {
+                  ...defaultData.user_alumno,
+                  ...(props.user.user_alumno || {})
               },
           }
       }
@@ -106,34 +130,56 @@ watch(() => page.props.errors, (newErrors) => {
   })
 })
 
-watch(() => formData.fecha_nacimiento, (newValue) => {
-    // Asegúrate de que el valor esté en el formato correcto para el campo 'date'
-    if (newValue) {
-        const date = new Date(newValue);
-        const formattedDate = date.toISOString().split('T')[0]; // Convierte a formato 'yyyy-mm-dd'
-        this.formData.fecha_nacimiento = formattedDate;
-    }
-})
+// watch(() => formData.fecha_nacimiento, (newValue) => {
+//     // Asegúrate de que el valor esté en el formato correcto para el campo 'date'
+//     if (newValue) {
+//         const date = new Date(newValue);
+//         const formattedDate = date.toISOString().split('T')[0]; // Convierte a formato 'yyyy-mm-dd'
+//         formData.fecha_nacimiento = formattedDate;
+//     }
+// })
 
-const formattedFechaNacimiento = computed(() => {
-  // Obtiene elementos asignados al usuario seleccionado
-  if (formData.fecha_nacimiento) {
-      const date = new Date(formData.fecha_nacimiento);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
-  }
-  return '';
+  // watch(() => formData.user_alumno.fecha_ingreso, (newValue) => {
+  //     // Asegúrate de que el valor esté en el formato correcto para el campo 'date'
+  //     if (newValue) {
+  //         const date = new Date(newValue);
+  //         const formattedDate = date.toISOString().split('T')[0]; // Convierte a formato 'yyyy-mm-dd'
+  //         formData.user_alumno.fecha_ingreso = formattedDate;
+  //     }
+  // })
 
-});
+//   const formattedFechaNacimiento = computed(() => {
+//   // Obtiene elementos asignados al usuario seleccionado
+//   if (formData.fecha_nacimiento) {
+//       const date = new Date(formData.fecha_nacimiento);
+//       const day = String(date.getDate()).padStart(2, '0');
+//       const month = String(date.getMonth() + 1).padStart(2, '0');
+//       const year = date.getFullYear();
+//       return `${day}/${month}/${year}`;
+//   }
+//   return '';
+//
+// });
+
+  // const formattedFechaIngreso = computed(() => {
+  //     // Obtiene elementos asignados al usuario seleccionado
+  //     if (formData.user_alumno.fecha_ingreso) {
+  //         const date = new Date(formData.user_alumno.fecha_ingreso);
+  //         const day = String(date.getDate()).padStart(2, '0');
+  //         const month = String(date.getMonth() + 1).padStart(2, '0');
+  //         const year = date.getFullYear();
+  //         return `${day}/${month}/${year}`;
+  //     }
+  //     return '';
+  //
+  // });
 
 const  formatDate = (date) => {
       const d = new Date(date);
       const day = String(d.getDate()).padStart(2, '0');
       const month = String(d.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
       const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${day}/${month}/${year}`;
   }
 
 const submitForm = () => {
@@ -324,9 +370,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                                               :value="formatDate(formData.fecha_nacimiento)"
                                           />
 
-                                          <small v-if="mode === 'edit'" class="text-muted text-xs text-gray-400">
-                                              {{ formatDate(formData.fecha_nacimiento) }}
-                                          </small>
+<!--                                          <small v-if="mode === 'edit'" class="text-muted text-xs text-gray-400">-->
+<!--                                              {{ formatDate(formData.fecha_nacimiento) }}-->
+<!--                                          </small>-->
                                           <p v-if="$page.props.errors.fecha_nacimiento" class="text-red-500 text-sm mt-1">
                                               {{ $page.props.errors.fecha_nacimiento }}
                                           </p>
@@ -513,8 +559,276 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                                   />
 
                               </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Nacinalidad</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_data_extend.nacionalidad"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_data_extend.nacionalidad'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_data_extend.nacionalidad']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_data_extend.nacionalidad'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+
+                              </div>
+
+
                           </div>
                       </div>
+
+                      <!-- Tab 4: Solo Alumnos -->
+                      <div v-show="activeTab === 4" class="space-y-4">
+                          <div class="grid grid-cols-4 md:grid-cols-4 gap-4">
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Matrícula Interna</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.matricula_interna"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.matricula_interna'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.matricula_interna']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.matricula_interna'] }}
+                                  </p>
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Matrícula Oficial</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.matricula_oficial"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.matricula_oficial'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.matricula_oficial']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.matricula_oficial'] }}
+                                  </p>
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Email ALumno</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.email_alumno"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.email_alumno'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.email_alumno']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.email_alumno'] }}
+                                  </p>
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Enfermedades</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.enfermedades"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.enfermedades'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.enfermedades']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.enfermedades'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Alergias</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.reacciones_alergicas"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.reacciones_alergicas'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.reacciones_alergicas']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.reacciones_alergicas'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Tipo Sangre</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.tipo_sangre"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.tipo_sangre'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.tipo_sangre']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.tipo_sangre'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Beca SEP</label>
+                                  <input
+                                      type="number"
+                                      v-model="formData.user_alumno.beca_sep"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.beca_sep'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.beca_sep']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.beca_sep'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Beca Arji</label>
+                                  <input
+                                      type="number"
+                                      v-model="formData.user_alumno.beca_arji"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.beca_arji'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.beca_arji']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.beca_arji'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Beca SP</label>
+                                  <input
+                                      type="number"
+                                      v-model="formData.user_alumno.beca_sp"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.beca_sp'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.beca_sp']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.beca_sp'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Beca Bach</label>
+                                  <input
+                                      type="number"
+                                      v-model="formData.user_alumno.beca_bach"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.beca_bach'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.beca_bach']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.beca_bach'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div class="mb-6">
+                                  <Checkbox
+                                      v-model:checked="formData.user_alumno.es_baja"
+                                      label="Es baja"
+                                      :error="$page.props.errors['user_alumno.es_baja']"
+                                      id="es_baja"
+                                  />
+                                  <label for="es_baja" class="ml-2 text-sm text-gray-600">Es baja</label>
+                                  <InputError :message="$page.props.errors['user_alumno.es_baja']" class="mt-2"/>
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Motivo Baja</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.motivo_baja"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.motivo_baja'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.motivo_baja']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.motivo_baja'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Ingreso</label>
+                                  <input
+                                      type="date"
+                                      v-model="formData.user_alumno.fecha_ingreso"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.fecha_ingreso'] }"
+                                      value="formatDate(formData.user_alumno.fecha_ingreso)"
+                                  />
+
+<!--                                  <small v-if="mode === 'edit'" class="text-muted text-xs text-gray-400">-->
+<!--                                      {{ formatDate(formData.user_alumno.fecha_ingreso) }}-->
+<!--                                  </small>-->
+                                  <p v-if="$page.props.errors['user_alumno.fecha_ingreso']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.fecha_ingreso'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+                              <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                                  <input
+                                      type="text"
+                                      v-model="formData.user_alumno.observaciones"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                      :class="{ 'border-red-500': $page.props.errors['user_alumno.observaciones'] }"
+                                  />
+                                  <p v-if="$page.props.errors['user_alumno.observaciones']" class="text-red-500 text-sm mt-1">
+                                      {{ $page.props.errors['user_alumno.observaciones'] }}
+                                  </p>
+                                  <input
+                                      type="hidden"
+                                      v-model="formData.id"
+                                      class="w-full px-3 py-2 border rounded-md"
+                                  />
+                              </div>
+
+
+
+
+                          </div>
+                      </div>
+
 
                       <!-- Navegación entre Tabs -->
                       <div class="mt-6 flex justify-between">

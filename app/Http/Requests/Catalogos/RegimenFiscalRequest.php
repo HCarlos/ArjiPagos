@@ -19,7 +19,7 @@ class RegimenFiscalRequest extends FormRequest
     {
         return [
             'clave_regimen_fiscal' => [
-                'min:3',
+                'min:1',
                 'max:3',
                 'unique:regimenes_fiscales,clave_regimen_fiscal,'.$this->id
             ],
@@ -30,8 +30,8 @@ class RegimenFiscalRequest extends FormRequest
     public function managed () {
 
         $item = [
-            'clave_regimen_fiscal' => strtoupper(trim($this->clave_regimen_fiscal)),
-            'regimen_fiscal'       => strtoupper(trim($this->regimen_fiscal)),
+            'clave_regimen_fiscal' => trim($this->clave_regimen_fiscal),
+            'regimen_fiscal'       => trim($this->regimen_fiscal),
         ];
 
         if (  (int)($this->id) <= 0) {

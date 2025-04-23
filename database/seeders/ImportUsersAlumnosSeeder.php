@@ -29,7 +29,7 @@ class ImportUsersAlumnosSeeder extends Seeder
         /* ************************************************************************************************
                 //SUBIMOS DEPENDENCIAS
         ************************************************************************************************** */
-        $file = 'public/csv/_viAlumnos.csv';
+        $file = 'public/csv/_vi_Alumnos.csv';
         $json_data = file_get_contents($file);
         $json_data = preg_split( "/\n/", $json_data );
 
@@ -41,31 +41,41 @@ class ImportUsersAlumnosSeeder extends Seeder
 
 //                dd($arr);
 
-                $username = strtolower(trim($arr[31]));
+                $username = strtolower(trim($arr[36]));
                 $password = bcrypt($username);
                 $email = $username."@mail.com";
-                $nombre = strtoupper(trim($arr[3]));
-                $ap_paterno = strtoupper(trim($arr[2]));
-                $ap_materno = strtoupper(trim($arr[1]));
-                $curp = strtoupper(trim($arr[11]));
+                $ap_paterno = strtoupper(trim($arr[2])) === "." ? "" : strtoupper(trim($arr[2]));
+                $ap_materno = strtoupper(trim($arr[3])) === "." ? "" : strtoupper(trim($arr[3]));
+                $nombre = strtoupper(trim($arr[4])) === "." ? "" : strtoupper(trim($arr[4]));
+                $curp = strtoupper(trim($arr[21]));
                 $emails = strtolower(trim($arr[9]));
-                $celulares = strtoupper(trim($arr[7]).", ".trim($arr[8]));
-                $telefonos = strtoupper(trim($arr[5]).", ".trim($arr[6]));
-                if (substr(trim($arr[13]), 0, 4) == "0000" || $arr[13] == "") {
+                $celulares = "";
+                $telefonos = "";
+                if (substr(trim($arr[11]), 0, 4) == "0000" || $arr[11] == "") {
                     $fecha_nacimiento = Carbon::now('America/Mexico_City')->format('Y-m-d');
                 }else{
-                    $pos = strpos(trim($arr[13]), "/");
-                    if ($pos !== false) {
-                        $arr[13] = str_replace("/", "-", trim(trim($arr[13])));
-                    }
-                    $arrFN = explode("-", trim($arr[13]));
-                    //->setDate($arrFN[2], $arrFN[1], $arrFN[0]);
-                    $fecha_nacimiento =date("Y-m-d", mktime(0, 0, 0, $arrFN[1], $arrFN[0], $arrFN[2])); //Carbon::parse('Y-m-d', $arr[13]);
+                    $fecha_nacimiento = trim($arr[11]);
                 }
 
-                $genero = (int) trim($arr[15]);
-                $old_user_id = (int) trim($arr[30]);
-                $old_persona_id = (int) trim($arr[0]);
+                if (substr(trim($arr[13]), 0, 4) == "0000" || $arr[13] == "") {
+                    $fecha_ingreso = Carbon::now('America/Mexico_City')->format('Y-m-d');
+                }else{
+                    $fecha_ingreso = trim($arr[13]);
+                }
+
+                $genero = (int) trim($arr[19]);
+
+                if (trim($arr[1]) === "NULL" || trim($arr[1]) === "") {
+                    $old_user_id = 0;
+                    $username = substr($ap_paterno,0,2).substr($ap_materno,0,2).substr($nombre,0,2).str(random_int(1000,9999));
+                    $password = bcrypt($username);
+                    $email = $username."@mail.com";
+                }else{
+                    $old_user_id = (int) trim($arr[1]);
+                }
+
+                $old_persona_id = 0;
+                $old_alumno_id = (int) trim($arr[0]);
 
                 $user = User::create([
                 'username'         => $username,
@@ -82,29 +92,49 @@ class ImportUsersAlumnosSeeder extends Seeder
                 'genero'           => $genero,
                 'old_user_id'      => $old_user_id,
                 'old_persona_id'   => $old_persona_id,
+                'old_alumno_id'    => $old_alumno_id,
                 ]);
 
                 //para alumnos
-                $user->roles()->attach(4);
+                $user->roles()->attach(12);
 
                 $user->permisos()->attach(7);
 
-                $user->user_adress()->create([
-                    'calle' => trim($arr[19]),
-                    'num_ext' => trim($arr[20]),
-                    'num_int' => trim($arr[21]),
-                    'colonia' => trim($arr[22]),
-                    'delegacion' => trim($arr[23]),
-                    'municipio' => trim($arr[24]),
-                    'estado' => trim($arr[25]),
-                    'pais' => trim($arr[26]),
-                    'cp' => trim($arr[27]),
+                $user->user_alumno()->create([
+                    'matricula_interna' => trim($arr[7]),
+                    'matricula_oficial' => trim($arr[8]),
+                    'email_alumno' => trim($arr[9]),
+                    'enfermedades' => trim($arr[28]),
+                    'reacciones_alergicas' => trim($arr[29]),
+                    'tipo_sangre' => trim($arr[27]),
+                    'beca_sep' => (float) trim($arr[15]),
+                    'beca_arji' => (float) trim($arr[16]),
+                    'beca_sp' => (float) trim($arr[17]),
+                    'beca_bach' => (float) trim($arr[18]),
+                    'es_baja' => !((int)trim($arr[24]) === 0),
+                    'motivo_baja' => trim($arr[26]) === 'NULL' ? '' : trim($arr[26]),
+                    'fecha_ingreso' => $fecha_ingreso,
+                    'observaciones' =>  trim($arr[38]),
                 ]);
+
+                $user->user_adress()->create([
+                    'calle' => '',
+                    'num_ext' => '',
+                    'num_int' => '',
+                    'colonia' => '',
+                    'delegacion' => '',
+                    'municipio' => '',
+                    'estado' => '',
+                    'pais' => '',
+                    'cp' => '',
+                ]);
+
                 $user->user_data_extend()->create([
-                    'ocupacion' => trim($arr[16]),
+                    'ocupacion' => '',
                     'profesion' => '',
                     'lugar_trabajo' => '',
-                    'lugar_nacimiento' => trim($arr[12]),
+                    'lugar_nacimiento' => trim($arr[10]),
+                    'nacionalidad' => trim($arr[20]),
                 ]);
                 $F->validImage($user,'profile','profile/');
 

@@ -5,6 +5,17 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+// import PrimeVue from 'primevue/config';
+// import DataTable from 'primevue/datatable';
+// import Column    from 'primevue/column';
+// import Paginator from 'primevue/paginator';    // si quieres un paginador custom
+// import 'primevue/resources/themes/saga-blue/theme.css';     // tema
+// import 'primevue/resources/primevue.min.css';               // estilos core
+// import 'primeicons/primeicons.css';                         // iconos
+// import 'primeflex/primeflex.css';                           // utilidades flex (opcional)
+
+
+
 // import 'flowbite';
 
 // import $ from 'jquery';
@@ -42,3 +53,7 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+// .component('DataTable', DataTable)
+//     .component('Column', Column)
+//     .component('Paginator', Paginator)

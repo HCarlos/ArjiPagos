@@ -38,14 +38,12 @@ class ImportUsersSeeder extends Seeder
                 $dupla = preg_split("/\t/", $json_data[$x], -1, PREG_SPLIT_NO_EMPTY);
                 $arr = str_getcsv($dupla[0]);
 
-//                dd($arr);
-
                 $username = strtolower(trim($arr[31]));
                 $password = bcrypt($username);
                 $email = $username."@mail.com";
-                $nombre = strtoupper(trim($arr[3]));
-                $ap_paterno = strtoupper(trim($arr[2]));
-                $ap_materno = strtoupper(trim($arr[1]));
+                $ap_paterno = strtoupper(trim($arr[1])) === "." ? "" : strtoupper(trim($arr[1]));
+                $ap_materno = strtoupper(trim($arr[2])) === "." ? "" : strtoupper(trim($arr[2]));
+                $nombre = strtoupper(trim($arr[3])) === "." ? "" : strtoupper(trim($arr[3]));
                 $curp = strtoupper(trim($arr[11]));
                 $emails = strtolower(trim($arr[9]));
                 $celulares = strtoupper(trim($arr[7]).", ".trim($arr[8]));
@@ -63,7 +61,15 @@ class ImportUsersSeeder extends Seeder
                 }
 
                 $genero = (int) trim($arr[15]);
-                $old_user_id = (int) trim($arr[30]);
+                if (trim($arr[30]) === "NULL" || trim($arr[30]) === "") {
+                    $username = substr($ap_paterno,0,2).substr($ap_materno,0,2).substr($nombre,0,2).str(random_int(1000,9999));
+                    $old_user_id = 0;
+                    $password = bcrypt($username);
+                    $email = $username."@mail.com";
+                }else{
+                    $old_user_id = (int) trim($arr[30]);
+                }
+
                 $old_persona_id = (int) trim($arr[0]);
 
                 $user = User::create([
@@ -85,9 +91,9 @@ class ImportUsersSeeder extends Seeder
 
                 // para padres
                 if ( $genero === 1) {
-                    $user->roles()->attach(5);
+                    $user->roles()->attach(1);
                 }else{
-                    $user->roles()->attach(6);
+                    $user->roles()->attach(2);
                 }
 
                 $user->permisos()->attach(7);
@@ -109,6 +115,9 @@ class ImportUsersSeeder extends Seeder
                     'lugar_trabajo' => '',
                     'lugar_nacimiento' => trim($arr[12]),
                 ]);
+
+                $user->user_alumno()->create();
+
                 $F->validImage($user,'profile','profile/');
 
 
