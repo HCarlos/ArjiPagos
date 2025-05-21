@@ -6,6 +6,7 @@ use App\Classes\FuncionesController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalogos\RegimenFiscalRequest;
 use App\Models\Catalogos\RegimenFiscal;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,12 +16,13 @@ class RegimenFiscalController extends Controller{
 
     use AuthorizesRequests;
 
-//    public function __construct(){
-//        $this->authorizeResource(User::class);
-//    }
+    public function __construct(){ }
 
-    public function index(Request $request): Response
-    {
+    public function middleware(): array{
+        return ['auth',];
+    }
+
+    public function index(Request $request): Response{
 
         $filters =$request->input('search');
 

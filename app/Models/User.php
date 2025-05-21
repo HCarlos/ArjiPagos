@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Catalogos\Ciclo;
 use App\Models\Catalogos\Familia;
+use App\Models\Catalogos\Grupo;
+use App\Models\Catalogos\Nivel;
 use App\Models\User\Permission;
 use App\Models\User\Role;
 use App\Models\User\UserAdress;
@@ -12,6 +15,8 @@ use App\Models\User\UserDataExtend;
 use App\Traits\UserAttributes;
 use App\Traits\UserImport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +32,7 @@ class User extends Authenticatable
 
     use UserImport, UserAttributes, SoftDeletes;
     use HasApiTokens, HasFactory, Notifiable;
+
     protected $guard_name = 'web';
     protected $table = 'users';
 
@@ -137,26 +143,27 @@ class User extends Authenticatable
         return $this->id;
     }
 
+    public function grupos(): BelongsToMany{
+        return $this->belongsToMany(Grupo::class, 'alumnos_grupos', 'alumno_user_id', 'grupo_id')
+            ->withPivot(['ciclo_id']);
+    }
 
-//    public function scopeRole(){
-//        return $this->roles()->first();
-//    }
+    public function nivel(): BelongsTo{
+        return $this->belongsTo(Nivel::class, 'nivel_id');
+    }
 
-//    public function sendPasswordResetNotification($token){
-//        $this->notify(new MyResetPassword($token));
-//    }
+    public function ciclo(): BelongsTo{
+        return $this->belongsTo(Ciclo::class, 'ciclo_id');
+    }
 
-//    public function sendEmailVerificationNotification(){
-//        $this->notify(new SendEmailAPIVerificationNotification());
-//    }
-
-//    public function arrayRoles(){
-//        $roles = [];
-//        foreach($this->roles()->get() as $r){
-//            $roles[] = ["id" => $r->id, 'name' => $r->name ];
-//        }
-//        return $roles;
-//    }
+    public function ciclos(): BelongsToMany{
+        return $this->belongsToMany(
+            Ciclo::class,
+            'alumnos_grupos',
+            'alumno_user_id',
+            'ciclo_id'
+        )->withPivot( ['grupo_id', 'is_visible', 'old_grupo_nivel_id', 'old_ciclo_id', 'old_nivel_id', 'old_grupo_id']);
+    }
 
 
 

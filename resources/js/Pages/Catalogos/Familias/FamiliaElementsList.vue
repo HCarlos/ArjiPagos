@@ -220,6 +220,7 @@ const destroy = (itemId) => {
                         <th class="px-5 py-4 border-b border-indigo-100">#ID</th>
                         <th class="px-5 py-4 border-b border-indigo-100">Usuario</th>
                         <th class="px-5 py-4 border-b border-indigo-100">Rol Asignado</th>
+                        <th class="px-5 py-4 border-b border-indigo-100">Grupo</th>
                         <th class="px-5 py-4 border-b border-indigo-100 w-28">Acciones</th>
                     </tr>
                     </thead>
@@ -232,11 +233,12 @@ const destroy = (itemId) => {
                         <td class="px-5 py-4 text-sm font-semibold text-indigo-900">{{ item.id }}</td>
                         <td class="px-5 py-4 font-medium text-gray-900">{{ item.usuario }}</td>
                         <td class="px-5 py-4">
-                        <span class="px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold shadow-xs inline-flex items-center gap-1.5">
-                            <span class="w-2 h-2 bg-indigo-400 rounded-full"></span>
-                            {{ item.role }}
-                        </span>
+                            <span class="px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold shadow-xs inline-flex items-center gap-1.5">
+                                <span class="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                                {{ item.role }}
+                            </span>
                         </td>
+                        <td class="px-5 py-4 font-medium text-gray-900">{{ item.grupo }}</td>
                         <td class="px-5 py-4">
                             <button
                                 @click="destroy(item.id)"

@@ -21,7 +21,8 @@ export default defineConfig({
         inject({
             $: 'jquery',
             jQuery: 'jquery',
-        })
+        }),
+
     ],
     server: {
         host: '192.168.56.77',
@@ -33,4 +34,16 @@ export default defineConfig({
     optimizeDeps: {
         include: ['jquery', 'select2', 'datatables.net-vue3', 'datatables.net-dt'],
     },
+    build: {
+        chunkSizeWarningLimit: 10000,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return 'vendor'
+                    }
+                }
+            }
+        }
+    }
 });

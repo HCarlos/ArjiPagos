@@ -2,6 +2,10 @@
 
 namespace App\Traits ;
 
+use App\Models\Catalogos\Ciclo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+
 trait UserAttributes{
 
 
@@ -55,8 +59,12 @@ trait UserAttributes{
         return $this->dependencias()->pluck('dependencia_id')->toArray();
     }
 
-    public function getFullNameAttribute() {
-        return "{$this->ap_paterno} {$this->ap_materno} {$this->nombre}";
+    public function getFullNameAttribute(){
+        return trim(
+            $this->ap_paterno . ' ' .
+            $this->ap_materno . ' ' .
+            $this->nombre
+        );
     }
 
     public function getFullNameWithUsernameAttribute() {
@@ -182,7 +190,17 @@ trait UserAttributes{
 
     }
 
+    public function scopeAlumno(Builder $query): Builder{
+        return $query->whereHas('roles', fn($q) =>
+        $q->where('name', 'ALUMNO')
+        );
+    }
 
+    public function scopeConGrupoCiclo($query, $cicloId, $grupoId){
+        return $query->whereHas("grupos", function ($q) use ($cicloId, $grupoId) {
+            $q->where('ciclo_id', $cicloId)->where('grupo_id', $grupoId);
+        });
+    }
 
 
 }

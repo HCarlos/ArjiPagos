@@ -8,10 +8,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class UserController extends Controller
-{
-    public function index(Request $request): \Inertia\Response
-    {
+class UserController extends Controller{
+
+
+    public function index(Request $request): \Inertia\Response{
 
         $filters =$request->input('search');
 
@@ -85,12 +85,65 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Usuario eliminado exitosamente');
     }
 
-    public function alumnosIndex()
-    {
-        return Inertia::render('Users/Alumnos/AlumnosIndex', [
-            'users' => User::paginate(250)
+    public function alumnosIndex(Request $request): \Inertia\Response{
+
+        $filters =$request->input('search');
+
+        if ($filters) {
+            $F        = new FuncionesController();
+            $filters  = strtolower($filters);
+            $filters  = $F->str_sanitizer($filters);
+            $tsString = $F->string_to_tsQuery( strtoupper($filters),' & ');
+
+            $users = User::with(['user_adress', 'user_data_extend', 'user_alumno'])
+                ->whereHas('roles', function ($q) {
+                    return $q->where('name', 'ALUMNO');
+                })
+                ->search( $tsString )
+                ->orderBy('id', 'desc')
+                ->paginate();
+
+            return Inertia::render('Users/Index', [
+                'users' => $users,
+                'totalAlumnos' => $users->count(),
+            ]);
+        }
+//        $users = User::with(['user_adress', 'user_data_extend', 'user_alumno'])
+//            ->whereHas('roles', function ($q) {
+//                return $q->where('name', 'ALUMNO');
+//            })
+//            ->orderBy('ap_paterno', 'asc')
+//            ->orderBy('ap_materno', 'asc')
+//            ->orderBy('nombre', 'asc')
+//            ->paginate(500);
+
+        $perPage = 500; // o config('app.pagination', 50);
+
+        $users = User::query()
+            ->alumno()   // nuestro scope
+            ->with(['user_adress', 'user_data_extend', 'user_alumno'])
+            ->orderByRaw(implode(', ', [
+                'ap_paterno ASC',
+                'ap_materno ASC',
+                'nombre     ASC',
+            ]))
+            ->paginate($perPage)
+            ->withQueryString();
+
+
+        return Inertia::render('Users/Index', [
+            'users' => $users,
+            'totalAlumnos' => $users->count(),
         ]);
+
     }
+
+
+
+
+
+
+
 
 
 }

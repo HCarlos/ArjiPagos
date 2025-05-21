@@ -5,6 +5,7 @@ import axios from 'axios';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import "/resources/css/User/asignaciones_v1.css";
 import "/resources/css/User/select2_v1.css";
+import {Head} from "@inertiajs/vue3";
 
 // --- PROPS ---
 const props = defineProps({
@@ -138,11 +139,6 @@ onBeforeUnmount(() => {
                             {{ user.full_name }} - {{ user.username }}
                         </option>
                     </select>
-
-<!--                    <UserSelect2-->
-<!--                        :users="users"-->
-<!--                        :initialSelectedUserId="selectedUserId"-->
-<!--                        v-model="selectedUserId" class="select-style"/>-->
 
                 </div>
 

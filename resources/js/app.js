@@ -5,6 +5,12 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+
+import VueToast from 'vue-toast-notification'
+// Puedes elegir otro tema: 'theme-sugar.css', 'theme-plain.css'
+import 'vue-toast-notification/dist/theme-sugar.css'
+
+
 // import PrimeVue from 'primevue/config';
 // import DataTable from 'primevue/datatable';
 // import Column    from 'primevue/column';
@@ -47,6 +53,11 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(LaravelPermissionToVueJS)
+            .use(VueToast, {
+                position: 'top-right',
+                duration: 3000,
+                dismissible: true,
+            })
             .mount(el);
     },
     progress: {

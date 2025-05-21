@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
 //            return "El formato del $attribute es inválido";
 //        });
 
+//        DB::statement("CREATE TEXT SEARCH CONFIGURATION es (COPY = spanish)");
+//        DB::statement("ALTER TEXT SEARCH CONFIGURATION es ALTER MAPPING FOR hword, word WITH unaccent, spanish_stem");
 
     }
 }

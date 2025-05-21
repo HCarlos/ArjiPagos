@@ -39,6 +39,14 @@ class FamiliaElementController extends Controller{
             ->orderBy('id')
             ->get();
 
+//        foreach ($familias as $f) {
+//            if ($f->role->name == 'ALUMNO') {
+//                $f->grupo = $f->user()->first()->grupos()->first()->grupo ?? "Sin Grupo";
+//            }else{
+//                $f->grupo = "";
+//            }
+//        }
+
         if ( $familias->count() > 0 ) {
             $fam =  $familias->map(fn($f) => [
                 'id' => $f->id,
@@ -48,11 +56,16 @@ class FamiliaElementController extends Controller{
                 'usuario' => $f->user->full_name,
                 'role_id' => $f->role_id,
                 'role' => $f->role->name,
+                'grupo' => $f->role->name === 'ALUMNO' ?
+                    $f->user()->first()->grupos()->first()->grupo ?? "Sin Grupo"
+                    : "",
             ]);
 
         }else{
             $fam =  [];
         }
+
+//        dd($fam);
 
         return Inertia::render('Catalogos/Familias/FamiliaElementsList', [
             'familiaElements' => $fam,

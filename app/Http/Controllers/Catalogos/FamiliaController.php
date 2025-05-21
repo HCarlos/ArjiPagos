@@ -16,10 +16,6 @@ class FamiliaController extends Controller{
 
     use AuthorizesRequests;
 
-//    public function __construct(){
-//        $this->authorizeResource(User::class);
-//    }
-
     public function index(Request $request): Response
     {
 

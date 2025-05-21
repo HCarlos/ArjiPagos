@@ -1,10 +1,16 @@
 <?php
 
+use App\Http\Controllers\Catalogos\AlumnoGrupoController;
+use App\Http\Controllers\Catalogos\CiclosController;
 use App\Http\Controllers\Catalogos\FamiliaController;
 use App\Http\Controllers\Catalogos\FamiliaElementController;
 use App\Http\Controllers\Catalogos\FamiliaRegistroFiscalController;
+use App\Http\Controllers\Catalogos\GrupoNivelController;
+use App\Http\Controllers\Catalogos\GruposController;
+use App\Http\Controllers\Catalogos\NivelesController;
 use App\Http\Controllers\Catalogos\RegimenFiscalController;
 use App\Http\Controllers\Catalogos\RegistroFiscalController;
+use App\Http\Controllers\Catalogos\UsoCFDIController;
 use App\Http\Controllers\User\BulkPermissionsController;
 use App\Http\Controllers\User\BulkUserRolesController;
 use App\Http\Controllers\User\UserRoleController;
@@ -39,12 +45,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/about', fn () => Inertia::render('About'))->name('about');
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::post('users.store', [UserController::class, 'store'])->name('users.store');
     Route::put('users.update/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users.delete/{user}', [UserController::class, 'destroy'])->name('users.delete');
+
+    // USERS ALUMNOS
+    Route::get('users.alumnos', [UserController::class, 'alumnosIndex'])->name('users.alumnos');
+
 
     // REGISTROS FISCALES
     Route::get('registros_fiscales_list', [RegistroFiscalController::class, 'index'])->name('regfis.index')->middleware('auth');
@@ -57,6 +68,38 @@ Route::middleware('auth')->group(function () {
     Route::post('regimenes_fiscales.store', [RegimenFiscalController::class, 'store'])->name('regifis.store');
     Route::put('regimenes_fiscales.update/{RegFis}', [RegimenFiscalController::class, 'update'])->name('regifis.update');
     Route::delete('regimenes_fiscales.delete/{regifisId}', [RegimenFiscalController::class, 'destroy'])->name('regifis.delete');
+
+// USO CFDI
+    Route::get('usocfdi_list', [UsoCFDIController::class, 'index'])->name('usocfdi.index')->middleware('auth');
+    Route::post('usocfdi.store', [UsoCFDIController::class, 'store'])->name('usocfdi.store');
+    Route::put('usocfdi.update/{UsoCFDI}', [UsoCFDIController::class, 'update'])->name('usocfdi.update');
+    Route::delete('usocfdi.delete/{usocfdiId}', [UsoCFDIController::class, 'destroy'])->name('usocfdi.delete');
+
+    // CICLOS
+    Route::get('ciclos', [CiclosController::class, 'index'])->name('ciclos.index')->middleware('auth');
+    Route::post('ciclo.store', [CiclosController::class, 'store'])->name('ciclo.store');
+    Route::put('ciclo.update', [CiclosController::class, 'update'])->name('ciclo.update');
+    Route::delete('ciclo.delete/{cicId}', [CiclosController::class, 'destroy'])->name('ciclo.delete');
+
+    // NIVELES
+    Route::get('niveles', [NivelesController::class, 'index'])->name('niveles.index')->middleware('auth');
+    Route::post('nivel.store', [NivelesController::class, 'store'])->name('nivel.store');
+    Route::put('nivel.update', [NivelesController::class, 'update'])->name('nivel.update');
+    Route::delete('nivel.delete/{nivId}', [NivelesController::class, 'destroy'])->name('nivel.delete');
+
+    // GRUPOS
+    Route::get('grupos', [GruposController::class, 'index'])->name('grupos.index')->middleware('auth');
+    Route::post('grupo.store', [GruposController::class, 'store'])->name('grupo.store');
+    Route::put('grupo.update', [GruposController::class, 'update'])->name('grupo.update');
+    Route::delete('grupo.delete/{gruId}', [GruposController::class, 'destroy'])->name('grupo.delete');
+
+    Route::get('grupos.en.nivel/{combo1_id}/{combo2_id}', [GrupoNivelController::class, 'GruposEnNivel'])->name('grupos.en.nivel');
+    Route::post('grupos.agregar.de.nivel', [GrupoNivelController::class, 'agregarItem'])->name('grupos.agregar.de.nivel');
+    Route::post('grupos.quitar.de.nivel', [GrupoNivelController::class, 'quitarItem'])->name('grupos.quitar.de.nivel');
+
+    Route::get('alumnos.a.grupo/{combo1_id}/{combo2_id}/{combo3_id}', [AlumnoGrupoController::class, 'index'])->name('alumnos.a.grupo');
+    Route::post('alumnos.agregar.a.grupo', [AlumnoGrupoController::class, 'agregarItem'])->name('alumnos.agregar.a.grupo');
+    Route::post('alumnos.quitar.a.grupo', [AlumnoGrupoController::class, 'quitarItem'])->name('alumnos.quitar.a.grupo');
 
     // FAMILIAS
     Route::get('familias', [FamiliaController::class, 'index'])->name('familias.index')->middleware('auth');

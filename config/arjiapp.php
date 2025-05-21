@@ -75,8 +75,8 @@ return [
         ],
         'catalogos' => [
             'users'                  => 'users',
-            'roles'                          => 'roles',
-            'permissions'                    => 'permissions',
+            'roles'                  => 'roles',
+            'permissions'            => 'permissions',
             'registros_fiscales'     => 'registros_fiscales',
             'imagenes'               => 'imagenes',
             'imagene_parent'         => 'imagene_parent',
@@ -86,7 +86,13 @@ return [
             'familia_registrofiscal' => 'familia_registrofiscal',
             'familia_user_role'      => 'familia_user_role',
             'regimenes_fiscales'     => 'regimenes_fiscales',
-
+            'ciclos'                 => 'ciclos',
+            'niveles'                => 'niveles',
+            'grupos'                 => 'grupos',
+            'grupos_niveles'         => 'grupos_niveles',
+            'alumnos_grupos'         => 'alumnos_grupos',
+            'usocfdi'                => 'usocfdi',
+            'conceptosdepagos'       => 'conceptosdepagos',
 
 
         ],

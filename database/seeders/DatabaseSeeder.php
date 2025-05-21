@@ -34,5 +34,17 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ImportFamiliasRegistrosfiscalesSeeder::class);
 
+        $this->call(ImportCiclosSeeder::class);
+
+        $this->call(ImportNivelesSeeder::class);
+
+        $this->call(ImportGruposSeeder::class);
+
+        $this->call(ImportAlumnosGruposSeeder::class);
+
+        $this->call(ImportGruposNivelesSeeder::class);
+
+        $this->call(ImportUsoCFDISeeder::class);
+
     }
 }

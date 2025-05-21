@@ -19,6 +19,8 @@ export default {
                 indigo: {
                     50: '#f0f4ff',
                     100: '#e0e8f9',
+                    600: '#4f46e5',
+                    700: '#4338ca'
                 }
             },
             borderRadius: {
