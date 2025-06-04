@@ -3,15 +3,14 @@
 namespace Database\Seeders;
 
 use App\Classes\FuncionesController;
-use App\Models\Catalogos\RegimenFiscal;
-use App\Models\Catalogos\UsoCFDI;
+use App\Models\Catalogos\ConceptoDePago;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 
-class ImportUsoCFDISeeder extends Seeder{
+class ImportConceptosDePagoSeeder extends Seeder{
 
 
     /**
@@ -24,13 +23,8 @@ class ImportUsoCFDISeeder extends Seeder{
         @ini_set( 'max_execution_time', '256000000' );
         @ini_set('memory_limit', '-1');
         header('Content-Type: text/html; charset=UTF-8'); // Colócalo al inicio del archivo
-        $F = new FuncionesController();
 
-        /* ************************************************************************************************
-                //SUBIMOS DEPENDENCIAS
-        ************************************************************************************************** */
-//        $file = 'public/csv/_viAlumnos.csv';
-        $file = 'public/csv/_vi_cat_usocfdi.csv';
+        $file = 'public/csv/_vi_cat_conceptos.csv';
         $json_data = file_get_contents($file);
         $json_data = preg_split( "/\n/", $json_data );
 
@@ -41,10 +35,11 @@ class ImportUsoCFDISeeder extends Seeder{
                 if ($dupla[0] !== 'Undefined' ) {
 
                     $arr = str_getcsv($dupla[0]);
-                    UsoCFDI::create([
-                        'clave_usocfdi' => $arr[1] ?? '',
-                        'usocfdi' => utf8_encode(trim($arr[2])) ?? '',
-                        'old_usocfdi_id' => (int) ($arr[0] ?? 0),
+                    ConceptoDePago::create([
+                        'concepto' => strtoupper(trim($arr[1] ?? '')),
+                        'concepto_unico' => strtoupper(trim($arr[2] ?? '')),
+                        'tag' => strtoupper(trim($arr[5] ?? '')),
+                        'old_concepto_id' => (int) ($arr[0] ?? 0),
                     ]);
 
                 }

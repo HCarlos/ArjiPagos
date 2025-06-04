@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Catalogos\AlumnoGrupoController;
 use App\Http\Controllers\Catalogos\CiclosController;
+use App\Http\Controllers\Catalogos\ConceptosDePagoController;
 use App\Http\Controllers\Catalogos\FamiliaController;
 use App\Http\Controllers\Catalogos\FamiliaElementController;
 use App\Http\Controllers\Catalogos\FamiliaRegistroFiscalController;
@@ -74,6 +75,12 @@ Route::middleware('auth')->group(function () {
     Route::post('usocfdi.store', [UsoCFDIController::class, 'store'])->name('usocfdi.store');
     Route::put('usocfdi.update/{UsoCFDI}', [UsoCFDIController::class, 'update'])->name('usocfdi.update');
     Route::delete('usocfdi.delete/{usocfdiId}', [UsoCFDIController::class, 'destroy'])->name('usocfdi.delete');
+
+// CONCEPTOS DE PAGO
+    Route::get('conceptodepago_list', [ConceptosDePagoController::class, 'index'])->name('conceptodepago.index')->middleware('auth');
+    Route::post('conceptodepago.store', [ConceptosDePagoController::class, 'store'])->name('conceptodepago.store');
+    Route::put('conceptodepago.update/{ConceptoDePago}', [ConceptosDePagoController::class, 'update'])->name('conceptodepago.update');
+    Route::delete('conceptodepago.delete/{conceptodepagoId}', [ConceptosDePagoController::class, 'destroy'])->name('conceptodepago.delete');
 
     // CICLOS
     Route::get('ciclos', [CiclosController::class, 'index'])->name('ciclos.index')->middleware('auth');

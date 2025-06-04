@@ -39,6 +39,7 @@ class ImportFamiliasSeeder extends Seeder{
             try{
 
                 $dupla = preg_split("/\t/", $json_data[$x], -1, PREG_SPLIT_NO_EMPTY);
+
                 if ( $dupla[0] !== 'Undefined' &&  isset($dupla[0]) )  {
 
                     $arr = str_getcsv($dupla[0]);

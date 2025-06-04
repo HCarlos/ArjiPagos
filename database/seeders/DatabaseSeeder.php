@@ -46,5 +46,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ImportUsoCFDISeeder::class);
 
+        $this->call(ImportConceptosDePagoSeeder::class);
+
+        $this->call(ImportUnidadDeMedidaSATSeeder::class);
+
+        $this->call(ImportProductosYServicioSATSeeder::class);
+
+
     }
 }
