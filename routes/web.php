@@ -14,7 +14,7 @@ use App\Http\Controllers\Catalogos\RegistroFiscalController;
 use App\Http\Controllers\Catalogos\UsoCFDIController;
 use App\Http\Controllers\User\BulkPermissionsController;
 use App\Http\Controllers\User\BulkUserRolesController;
-use App\Http\Controllers\User\UserRoleController;
+//use App\Http\Controllers\User\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
