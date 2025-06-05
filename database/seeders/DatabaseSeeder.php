@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void{
 
-
         $this->call(RolesAndPermissionsSeeder::class);
 
         $this->call(ImportUsersAlumnosSeeder::class);
@@ -51,6 +50,12 @@ class DatabaseSeeder extends Seeder
         $this->call(ImportUnidadDeMedidaSATSeeder::class);
 
         $this->call(ImportProductosYServicioSATSeeder::class);
+
+        $this->call(ImportEmisoresFiscalesSeeder::class);
+
+        $this->call(ImportConfiPagosSeeder::class);
+
+
 
 
     }

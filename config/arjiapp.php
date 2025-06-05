@@ -93,8 +93,10 @@ return [
             'alumnos_grupos'         => 'alumnos_grupos',
             'usocfdi'                => 'usocfdi',
             'conceptosdepagos'       => 'conceptosdepagos',
-
-
+            'emisoresfiscales'       => 'emisoresfiscales',
+            'prodservsat'            => 'prodservsat',
+            'unidadmedidasat'        => 'unidadmedidasat',
+            'pagos'                  => 'pagos',
         ],
         'mobiles' => [
             'users'                          => 'users',
