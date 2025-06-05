@@ -9,11 +9,11 @@ trait UserImport{
 
 
     public static function findOrCreateUserWithRole(
-        string $username = '', string $nombre = '', string $ap_paterno = '', string $ap_materno = '', string $email = '', string $password = '',
-        string $calle = '', $num_ext='', string $num_int='', string $colonia='', string $localidad='',
-        string $cp='', string $curp='', string $lugar_nacimiento='', string $fecha_nacimiento, int $genero=0,
-        string $emails = '', string $celulares = '', string $telefonos = '', int $empresa_id=1, string $ocupacion='',
-        string $roles = ''
+        string $username, string $nombre, string $ap_paterno, string $ap_materno, string $email, string $password,
+        string $calle, $num_ext, string $num_int, string $colonia, string $localidad,
+        string $cp, string $curp, string $lugar_nacimiento, string $fecha_nacimiento, int $genero,
+        string $emails, string $celulares, string $telefonos, int $empresa_id, string $ocupacion,
+        string $roles
     ){
         $result = false;
 
