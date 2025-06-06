@@ -6,7 +6,7 @@ use App\Classes\FuncionesController;
 use App\Models\Catalogos\ConceptoDePago;
 use App\Models\Catalogos\EmisorFiscal;
 use App\Models\Catalogos\Nivel;
-use App\Models\Catalogos\PagosCat;
+use App\Models\Catalogos\PagoCat;
 use App\Models\Catalogos\ProductosYServiciosSAT;
 use App\Models\Catalogos\UnidadMedidaSAT;
 use Decimal\Decimal;
@@ -56,7 +56,7 @@ class ImportConfiPagosSeeder extends Seeder{
                     $pss = $pss === 0 ? 1 : $pss;
                     $Pss = ProductosYServiciosSAT::select('id')->where('old_prodserv_id',$pss)->first();
 
-                    $item = PagosCat::create([
+                    $item = PagoCat::create([
                         'nivel_id' => $Niv->id ?? 1,
                         'emisorfiscal_id' => $Ef->id ?? 1,
                         'concepto_id' => $Ep->id ?? 1,

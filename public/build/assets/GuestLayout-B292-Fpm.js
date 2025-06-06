@@ -1,1 +1,0 @@
-import{d as s,o,f as t,D as a}from"./vendor-Mf1CNb9E.js";const r={class:"flex items-center min-h-screen p-6 bg-gray-50"},l={class:"flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl"},_={__name:"GuestLayout",setup(n){return(e,c)=>(o(),s("div",r,[t("div",l,[a(e.$slots,"default")])]))}};export{_};

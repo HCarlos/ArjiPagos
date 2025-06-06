@@ -9,6 +9,7 @@ use App\Http\Controllers\Catalogos\FamiliaRegistroFiscalController;
 use App\Http\Controllers\Catalogos\GrupoNivelController;
 use App\Http\Controllers\Catalogos\GruposController;
 use App\Http\Controllers\Catalogos\NivelesController;
+use App\Http\Controllers\Catalogos\PagosConfigController;
 use App\Http\Controllers\Catalogos\RegimenFiscalController;
 use App\Http\Controllers\Catalogos\RegistroFiscalController;
 use App\Http\Controllers\Catalogos\UsoCFDIController;
@@ -82,6 +83,13 @@ Route::middleware('auth')->group(function () {
     Route::post('conceptodepago.store', [ConceptosDePagoController::class, 'store'])->name('conceptodepago.store');
     Route::put('conceptodepago.update/{ConceptoDePago}', [ConceptosDePagoController::class, 'update'])->name('conceptodepago.update');
     Route::delete('conceptodepago.delete/{conceptodepagoId}', [ConceptosDePagoController::class, 'destroy'])->name('conceptodepago.delete');
+
+// CONFIGURACION DE PAGO
+    Route::get('configuraciondepago_list', [PagosConfigController::class, 'index'])->name('configuraciondepago.index')->middleware('auth');
+    Route::post('configuraciondepago.store', [PagosConfigController::class, 'store'])->name('configuraciondepago.store');
+    Route::put('configuraciondepago.update/{PagoCat}', [PagosConfigController::class, 'update'])->name('configuraciondepago.update');
+    Route::delete('configuraciondepago.delete/{pagoId}', [PagosConfigController::class, 'destroy'])->name('configuraciondepago.delete');
+
 
     // CICLOS
     Route::get('ciclos', [CiclosController::class, 'index'])->name('ciclos.index')->middleware('auth');
