@@ -5,33 +5,48 @@ import {destroyDataTable, initializeDataTable} from "@/js/arjiapp";
 import $ from 'jquery';
 import 'datatables.net-dt/css/dataTables.dataTables.min.css';
 import DataTable from 'datatables.net-dt';
-import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch} from "vue";
 
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import {router, usePage} from '@inertiajs/vue3';
 
 import "/resources/css/general.css";
-import FormModalUsoCFDI from "@/Pages/Catalogos/UsoCFDI/FormModalUsoCFDI.vue";
-import FormModalConceptoDePago from "@/Pages/Catalogos/ConceptosDePago/FormModalConceptoDePago.vue";
+import FormModalPagoConfig from "@/Pages/Catalogos/PagosConfig/FormModalPagoConfig.vue";
 
-const conceptosdepago = computed(() => usePage().props.conceptosdepago);
-const totalConceptosDePagos = computed(() => usePage().props.totalConceptosDePagos);
+const pagoscat = computed(() => usePage().props.pagoscat);
+const totalPagoCats = computed(() => usePage().props.totalPagoCats);
+
+const niveles = computed(() => usePage().props.niveles);
+const emisoresfiscales = computed(() => usePage().props.emisoresfiscales);
+const conceptos = computed(() => usePage().props.conceptos);
+const prodservsats = computed(() => usePage().props.prodservsats);
+const unidades = computed(() => usePage().props.unidades);
+
+// const props = defineProps({
+//     niveles: Array,
+//     emisoresfiscales: Array,
+//     conceptos: Array,
+//     prodservsats: Array,
+//     unidades: Array,
+// })
+
 
 const textSearch = ref('');
 const showModal = ref(false);
-const selectedRegistro = ref({});
+const selectedRegistro = reactive({});
+
 
 // Referencia para la instancia de DataTable
 const dataTable = ref(null);
 
 const openModal = (registro = null) => {
-    selectedRegistro.value = registro ?? {};
+    Object.assign(selectedRegistro, registro || {});
     showModal.value = true;
 };
 
 const refreshData = () => {
-    router.reload({ only: ['conceptosdepago'] });
+    router.reload({ only: ['pagoscat'] });
 };
 
 
@@ -50,7 +65,7 @@ onBeforeUnmount(() => {
 });
 
 watch(
-    () => conceptosdepago.value?.length, // solo reacciona cuando cambia la lista
+    () => pagoscat.value?.length, // solo reacciona cuando cambia la lista
     () => {
         // destroyDataTable(dataTable);
         nextTick(() => {
@@ -60,24 +75,24 @@ watch(
 );
 
 
-const destroy = (conceptodepagoId) => {
-    if (confirm('¿Estás seguro de que deseas eliminar el registro '+conceptodepagoId+' ?')) {
+const destroy = (pagoId) => {
+    if (confirm('¿Estás seguro de que deseas eliminar el registro '+pagoId+' ?')) {
 
-        const url = route('conceptodepago.delete', conceptodepagoId)
+        const url = route('configuraciondepago.delete', pagoId)
 
         const method = 'delete'
 
         router[method](url, {
             preserveScroll: true,
             onSuccess: () => {
-                alert('El Concepto de Pago '+conceptodepagoId+' fue eliminado correctamente');
-                $("#tblConceptosDePago-"+conceptodepagoId).remove();
+                alert('El Pago '+pagoId+' fue eliminado correctamente');
+                $("#tblConfiguracionDePago-"+pagoId).remove();
             },
             onError: (err) => {
                 errors.value = err
             },
             onFinish: () => {
-                $("#tblConceptosDePago-"+conceptodepagoId).remove();
+                $("#tblConfiguracionDePago-"+pagoId).remove();
             }
         })
 
@@ -114,7 +129,7 @@ const destroy = (conceptodepagoId) => {
 
                 <div class="px-4 py-2 -mx-3 w-full">
 					<span class="mx-3 float-start">
-						<span class="font-semibold text-blue-500">({{ totalConceptosDePagos }}) USO CFDI</span>
+						<span class="font-semibold text-blue-500">({{ totalPagoCats }}) USO CFDI</span>
 						<p class="text-sm text-gray-600">Catálago general</p>
 					</span>
 
@@ -122,16 +137,21 @@ const destroy = (conceptodepagoId) => {
                         <i class="mr-2 fas fa-plus"></i> Nuevo Registro
                     </SecondaryButton>
 
-                    <FormModalConceptoDePago
+                    <FormModalPagoConfig
                         :show="showModal"
-                        :conceptodepago="selectedRegistro"
+                        :pago="selectedRegistro"
+                        :niveles = "niveles"
+                        :emisoresfiscales = "emisoresfiscales"
+                        :conceptos = "conceptos"
+                        :prodservsats = "prodservsats"
+                        :unidades = "unidades"
                         @close="showModal = false"
                         @success="refreshData"
                     />
 
                     <span
                         class=" float-end px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase sm:grid-cols-9">
-                        <form action="/conceptodepago_list">
+                        <form action="/configuraciondepago_list">
                         <input
                             type="text"
                             name="search"
@@ -154,13 +174,17 @@ const destroy = (conceptodepagoId) => {
                         <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b">
                             <th class="px-4 py-3">ID</th>
                             <th class="px-4 py-3">Concepto de Pago</th>
+                            <th class="px-4 py-3">Nivel</th>
+                            <th class="px-4 py-3">Importe</th>
                             <th class="px-4 py-3"></th>
                         </tr>
                         </thead>
                         <tbody class="bg-white divide-y">
-                        <tr v-for="registro in conceptosdepago" :key="registro.id" class="text-gray-700 delete-button"  :id="'tblConceptosDePago-' + registro.id" >
+                        <tr v-for="registro in pagoscat" :key="registro.id" class="text-gray-700 delete-button"  :id="'tblConfiguracionDePago-' + registro.id" >
                             <td class="px-4 py-3 text-sm">{{ registro.id }}</td>
-                            <td class="px-4 py-3 text-sm">{{ registro.concepto }}</td>
+                            <td class="px-4 py-3 text-sm">{{ registro.concepto.concepto }}</td>
+                            <td class="px-4 py-3 text-sm">{{ registro.nivel.nivel }}</td>
+                            <td class="px-4 py-3 text-sm">{{ registro.importe_formatted }}</td>
                             <td class="px-4 py-3 text-sm td-buttons">
                                 <SecondaryButton as="button" @click="destroy(registro.id)" class="icon-button-trash"><i class="fa fa-trash"></i></SecondaryButton>
                                 <SecondaryButton as="button" @click="openModal(registro)"  class="icon-button-edit"><i class="fa fa-edit"></i></SecondaryButton>

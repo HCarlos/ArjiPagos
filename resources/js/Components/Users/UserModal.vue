@@ -130,49 +130,6 @@ watch(() => page.props.errors, (newErrors) => {
   })
 })
 
-// watch(() => formData.fecha_nacimiento, (newValue) => {
-//     // Asegúrate de que el valor esté en el formato correcto para el campo 'date'
-//     if (newValue) {
-//         const date = new Date(newValue);
-//         const formattedDate = date.toISOString().split('T')[0]; // Convierte a formato 'yyyy-mm-dd'
-//         formData.fecha_nacimiento = formattedDate;
-//     }
-// })
-
-  // watch(() => formData.user_alumno.fecha_ingreso, (newValue) => {
-  //     // Asegúrate de que el valor esté en el formato correcto para el campo 'date'
-  //     if (newValue) {
-  //         const date = new Date(newValue);
-  //         const formattedDate = date.toISOString().split('T')[0]; // Convierte a formato 'yyyy-mm-dd'
-  //         formData.user_alumno.fecha_ingreso = formattedDate;
-  //     }
-  // })
-
-//   const formattedFechaNacimiento = computed(() => {
-//   // Obtiene elementos asignados al usuario seleccionado
-//   if (formData.fecha_nacimiento) {
-//       const date = new Date(formData.fecha_nacimiento);
-//       const day = String(date.getDate()).padStart(2, '0');
-//       const month = String(date.getMonth() + 1).padStart(2, '0');
-//       const year = date.getFullYear();
-//       return `${day}/${month}/${year}`;
-//   }
-//   return '';
-//
-// });
-
-  // const formattedFechaIngreso = computed(() => {
-  //     // Obtiene elementos asignados al usuario seleccionado
-  //     if (formData.user_alumno.fecha_ingreso) {
-  //         const date = new Date(formData.user_alumno.fecha_ingreso);
-  //         const day = String(date.getDate()).padStart(2, '0');
-  //         const month = String(date.getMonth() + 1).padStart(2, '0');
-  //         const year = date.getFullYear();
-  //         return `${day}/${month}/${year}`;
-  //     }
-  //     return '';
-  //
-  // });
 
 const  formatDate = (date) => {
       const d = new Date(date);

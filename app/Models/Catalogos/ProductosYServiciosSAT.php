@@ -16,5 +16,11 @@ class ProductosYServiciosSAT extends Model{
         'id', 'clave', 'descripcion', 'status_prodserv', 'old_prodserv_id', 'empresa_id',
     ];
 
+    protected $appends = ['producto_servicio'];
+    public function getProductoServicioAttribute(){
+        return $this->clave . ' - ' . $this->descripcion;
+    }
+
+
 
 }

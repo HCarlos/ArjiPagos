@@ -45,10 +45,25 @@ class PagoCat extends Model{
         'tiene_descuento_por_promocion' => 'boolean',
         'es_facturable' => 'boolean',
         'se_puede_ver_en_pantalla' => 'boolean',
+        'tagpagos' => 'string',
+        'importe' => 'decimal:4',
     ];
 
+
+    protected $appends = ['importe_formatted'];
+    // Accessor para formatear el importe
+    public function getImporteFormattedAttribute(){
+        // number_format(valor, decimales, separador_decimal, separador_miles)
+        return number_format($this->importe, 2, '.', ',');
+    }
+
+    // Si necesitas el valor sin decimales extras (76000.00 en vez de 76000.0000)
+    // puedes también añadir un mutador para cuando se guarda el dato.
+     public function setImporteAttribute($value){
+         $this->attributes['importe'] = round($value, 2); // Redondea a 2 decimales antes de guardar
+     }
     public function nivel(){
-        return $this->hasOne(Nivel::class);
+        return $this->belongsTo(Nivel::class);
     }
 
     public function niveles(){
@@ -56,7 +71,7 @@ class PagoCat extends Model{
     }
 
     public function concepto(){
-        return $this->hasOne(ConceptoDePago::class);
+        return $this->belongsTo(ConceptoDePago::class);
     }
 
     public function conceptos(){
@@ -64,7 +79,7 @@ class PagoCat extends Model{
     }
 
     public function emisorfiscal(){
-        return $this->hasOne(EmisorFiscal::class);
+        return $this->belongsTo(EmisorFiscal::class);
     }
 
     public function emisoresfiscales(){
@@ -80,7 +95,7 @@ class PagoCat extends Model{
     }
 
     public function unidadmedidasat(){
-        return $this->hasOne(UnidadMedidaSAT::class);
+        return $this->belongsTo(UnidadMedidaSAT::class);
     }
 
     public function unidadmedidasats(){

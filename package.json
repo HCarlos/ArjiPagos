@@ -22,6 +22,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.23",
         "@inertiajs/inertia": "^0.11.1",
         "@types/datatables.net": "^1.10.28",
         "@vuelidate/core": "^2.0.3",

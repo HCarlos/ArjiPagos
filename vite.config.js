@@ -25,6 +25,7 @@ export default defineConfig({
 
     ],
     server: {
+        // host: '192.168.56.77',
         host: '192.168.255.2',
         mimetype: 'text/html',
         watch: {
@@ -47,3 +48,6 @@ export default defineConfig({
         }
     }
 });
+
+// host: '192.168.56.77',
+// host: '192.168.255.2',

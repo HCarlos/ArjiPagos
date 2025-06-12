@@ -16,4 +16,11 @@ class UnidadMedidaSAT extends Model{
         'id', 'clave', 'descripcion', 'status_unidadmedida', 'empresa_id',
     ];
 
+    protected $appends = ['unidad_medida'];
+    public function getUnidadMedidaAttribute(){
+        return $this->clave . ' - ' . $this->descripcion;
+    }
+
+
+
 }
